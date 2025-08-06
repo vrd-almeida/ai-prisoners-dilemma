@@ -6,14 +6,14 @@ Move = Literal["Confess", "Silent"]
 
 
 class QLearningAgent:
-    def __init__(self, alpha=0.2, gamma=0.6, epsilon=0.95):
+    def __init__(self, alpha=0.2, gamma=0.1, epsilon=0.95):
         self.name = "Q-Learner"
         self.q_table = {}  # (last_opponent_move, action): value
         self.alpha = alpha  # learning rate
         self.gamma = gamma  # discount factor
         self.epsilon = epsilon  # exploration rate
         self.last_opponent_move: None | Move = None
-        self.my_last_action: None | Move = None
+        self.last_action: None | Move = None
 
     def play(self) -> Move:
         action: Move
@@ -32,21 +32,23 @@ class QLearningAgent:
 
     def update(
         self,
-        my_current_move: Move,
+        current_move: Move,
         opponents_current_move: Move,
         sentence: Literal[0, 1, 5, 10],
     ) -> None:
-        old_q = self.q_table.get((self.last_opponent_move, self.my_last_action), 0.0)
+        old_q = self.q_table.get((self.last_opponent_move, self.last_action), 0.0)
         future_q = max(
             self.q_table.get((opponents_current_move, a), 0.0)
             for a in ["Confess", "Silent"]
         )
-        sentence_to_reward_map = {10: 0, 5: 4, 1: 8, 0: 10}
+        sentence_to_reward_map = {10: 0, 5: 5, 1: 9, 0: 10}
         reward = sentence_to_reward_map[sentence]
-        new_q = old_q + self.alpha * (reward + self.gamma * future_q - old_q)
-        self.my_last_action = my_current_move
+        new_q = old_q + self.alpha * (1 - self.epsilon) * (
+            reward + self.gamma * (future_q - old_q)
+        )
+        self.last_action = current_move
         self.last_opponent_move = opponents_current_move
-        self.q_table[(self.last_opponent_move, self.my_last_action)] = new_q
+        self.q_table[(self.last_opponent_move, self.last_action)] = new_q
         print(self.q_table)
 
 

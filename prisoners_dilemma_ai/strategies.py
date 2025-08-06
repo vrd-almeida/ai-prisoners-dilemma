@@ -14,7 +14,7 @@ class AlwaysConfess:
 
     def update(
         self,
-        my_current_move: Move,
+        current_move: Move,
         opponents_current_move: Move,
         sentence: Literal[0, 1, 5, 10],
     ):
@@ -30,7 +30,7 @@ class AlwaysStaySilent:
 
     def update(
         self,
-        my_current_move: Move,
+        current_move: Move,
         opponents_current_move: Move,
         sentence: Literal[0, 1, 5, 10],
     ):
@@ -47,8 +47,9 @@ class AlwaysOpponentsLastMove:
 
     def update(
         self,
-        my_current_move: Move,
+        current_move: Move,
         opponents_current_move: Move,
         sentence: Literal[0, 1, 5, 10],
     ) -> None:
         self.last_opponent_move = opponents_current_move
+        print(f"{self.name} last opponent move: {self.last_opponent_move}")
