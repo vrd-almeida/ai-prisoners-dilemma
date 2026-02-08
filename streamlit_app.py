@@ -1,6 +1,6 @@
-# streamlit_app.py
 import streamlit as st
 import pandas as pd
+
 from prisoners_dilemma_ai.strategies import (
     AlwaysConfess,
     AlwaysOpponentsLastMove,
@@ -18,6 +18,7 @@ opponent_options = {
     "Always Confess": AlwaysConfess,
     "Always Stay Silent": AlwaysStaySilent,
     "Tit for Tat": AlwaysOpponentsLastMove,
+    "AI agent": QLearningAgent,
 }
 
 if "opponent_type" not in st.session_state:
@@ -39,14 +40,17 @@ if "opponent_type" not in st.session_state:
 st.success(f"Playing against: {st.session_state.opponent_type}")
 
 if st.button("▶️ Play next round"):
-    m1, m2, r1, r2 = play_round(st.session_state.agent, st.session_state.opponent)
+    move1, move2, sentence1, sentence2 = play_round(
+        st.session_state.agent, st.session_state.opponent
+    )
     # st.session_state.score += r1
     st.session_state.history.append(
         {
             "Round": st.session_state.round + 1,
-            "AI": m1,
-            "Opponent": m2,
-            "Reward": r1,
+            "AI": move1,
+            "Opponent": move2,
+            "Sentence AI": sentence1,
+            "Sentence Opponent": sentence2,
             # "Accumulated": st.session_state.score,
         }
     )
@@ -56,7 +60,7 @@ if st.button("▶️ Play next round"):
 if st.session_state.history:
     df = pd.DataFrame(st.session_state.history)
     st.subheader("📜 Rounds History")
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width="stretch", hide_index=True)
     # st.line_chart(df["Accumulated"])
 
     # Show Q-table

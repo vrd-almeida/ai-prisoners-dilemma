@@ -12,10 +12,10 @@ from prisoners_dilemma_ai.rl_agent import QLearningAgent
 
 Player = AlwaysConfess | AlwaysStaySilent | AlwaysOpponentsLastMove | QLearningAgent
 
-
-# C: Cooperate / stay silent; D: Defect / confess
 # noinspection PyTypeChecker
-PAYOFFS: dict[tuple[str, str], Literal[0, 1, 5, 10]] = {
+PAYOFFS: dict[
+    tuple[str, str], tuple[Literal[0, 1, 5, 10], Literal[0, 1, 5, 10]],
+] = {
     ("Silent", "Silent"): (1, 1),
     ("Confess", "Silent"): (0, 10),
     ("Silent", "Confess"): (10, 0),
